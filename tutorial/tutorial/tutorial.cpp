@@ -10,18 +10,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		PostQuitMessage(0);
 	}
 	else if (uMsg == WM_LBUTTONDOWN) {
-		HDC hdc = GetDC(hWnd);
-		HDC h_mem_dc = CreateCompatibleDC(hdc);
+		HDC h_dc = GetDC(hWnd);
 
-		HBITMAP h_bitmap = CreateCompatibleBitmap(hdc, 400, 300);
+		HPEN h_pen = CreatePen(PS_DASH, 5, RGB(10, 0, 100));
+		HPEN old_pen = (HPEN)SelectObject(h_dc, h_pen);
 
-		SelectObject(hdc, h_bitmap);
+		Rectangle(h_dc, 10, 10, 100, 100);
 
-		Rectangle(h_mem_dc, 10, 10, 100, 100);
-
-		DeleteObject(h_bitmap);
-		DeleteDC(h_mem_dc);
-		ReleaseDC(hWnd, hdc);
+		SelectObject(h_dc, old_pen);
+		DeleteObject(h_pen);
+		ReleaseDC(hWnd, h_dc);
 	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -151,4 +149,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	WM_CLOSE : 종료할 때 발생하는 명령 : 메세지 박스 정도 추가하는 것도 나쁘지 않다
 	WM_DESTROY : 이미 윈도우를 파괴함(여기서는 뭘 할 수 없음)
 	WM_MOVING : 윈도우가 움직일때 작동, lParam에 현재 윈도우의 절대 위치가 저장되어 있음 : WM_MOVING까지 함
+
+	SelectObject 함수는 DC에 저장된 GDI 오프젝트의 핸들값을 변경할 때 사용한다.
+	HGDIOBJ SelectObject(HDC hdc, HGDIOBJ hgdiobj) : 바꿀 DC, 비트맵(메모리 DC인 경우만 가능), 브러쉬, 펜 등 오브젝트
+
+	선의 색상이나 형태를 변경
+	HPEN CreatePen(int fnPenStyle, int nWidth, COLORREF crColor) : 선의 종류(PS_STYLE), 펜 굵기(픽셀 단위), 펜 색 - 반환 : 새로운 펜의 핸들러
+
+	Stock Object 사용(위도우에서 미리 지원하는 자우너(예를 들어서 흰색 오브젝트(많이 사용함)))
+	HGDIOBJ GetStockObject(int fnObject) : 필요한 오프젝트 종류 - 반환 : 해당 오브젝트 핸들러
+	주의사항 : 오브젝트 제거를 하면 안됨(DeleteObject, CloseHandle 사용 금지)(별도 생성 자원이 아니기 때문)
+
+	브러쉬 중 채우기 속성이 있는 브러쉬
+	HBRUSH CreateSolidBrush(COLORREF crColor), HBRUSH CreateHatchBrush(int fnStyle, COLORREF crColor) : HS_STYLE, 색 - 핸들러 반환
+
+	임시 설정(편의성 위주, 일시적)
+	COLORREF SetDCBrushColor(HDC hdc, COLORREF crColor) : 기본적으로 DC_BRUSH 오브제트를 들고 와야함
+	COLORREF SetDCPenColor(HDC hdc, COLORREF crColor) : 기본적으로 DC_PEN 오브제트를 들고 와야함
+
 */
