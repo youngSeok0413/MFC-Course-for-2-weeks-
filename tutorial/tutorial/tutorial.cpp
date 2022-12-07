@@ -167,4 +167,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	COLORREF SetDCBrushColor(HDC hdc, COLORREF crColor) : 기본적으로 DC_BRUSH 오브제트를 들고 와야함
 	COLORREF SetDCPenColor(HDC hdc, COLORREF crColor) : 기본적으로 DC_PEN 오브제트를 들고 와야함
 
+	윈도우 기반 일정한 시간 간격으로 반복적인 작업을 하고 싶은 경우 
+	UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse, void(CALLBACK* lpfnTimer)(HWND, UINT, UINT_PTR, DWORD))
+		: 타이머를 사용할 윈도우의 핸들값, 타이머의 고유번호(여러 갱의 타이머를 사용할 수 있기 때문에 : 같은 번호로 쓰면 덮어씀), 반복할 시간 간격(ms 단위), 호출될 함수의 주소(CALLBACK 함수)
+		-> void CALLBACK MyTimerProc(HWND hWNd, UINT nMsg, UINT_PTR nIDEvent, DWORD dwTime){
+			}
+	BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent) : 타이머 제거하기
 */

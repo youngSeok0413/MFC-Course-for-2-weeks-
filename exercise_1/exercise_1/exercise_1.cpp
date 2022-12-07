@@ -26,7 +26,14 @@ void OnLButtonDown(HWND ah_wnd, int a_x, int a_y) {
 	//영역 안으로 들어감
 	if (a_x > XPOS(0) - HALF_INTERVAL && a_y > YPOS(0) - HALF_INTERVAL
 		&& a_x < XPOS(X_COUNT-1) + HALF_INTERVAL && a_y < YPOS(Y_COUNT-1) + HALF_INTERVAL) {
-		
+		int x = (a_x - X_START + HALF_INTERVAL)/INTERVAL;
+		int y = (a_y - Y_START + HALF_INTERVAL) / INTERVAL;
+
+		if (g_dol[y][x] == 0) {
+			g_dol[y][x] = g_step + 1;
+			g_step = !g_step;
+			InvalidateRect(ah_wnd, NULL, TRUE);
+		}
 	}
 }
 
@@ -74,6 +81,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	else if (uMsg == WM_PAINT) {
 		OnPaint(hWnd);
 	}
+	else if (uMsg == WM_LBUTTONDOWN) {
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		OnLButtonDown(hWnd, x, y);
+	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -87,8 +99,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.cbClsExtra = NULL;
 	wc.cbWndExtra = NULL;
 	wc.hbrBackground = crBackgorund;
-	wc.hCursor = LoadCursor(hInstance, IDC_ARROW);
-	wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wc.hInstance = hInstance;
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = my_class_name;
